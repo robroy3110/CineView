@@ -5,25 +5,29 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
-            android:title="@string/home"/>
+            android:title="@string/home"
+            android:background="@color/white"/>
     </group>
     <group>
         <item
             android:id="@+id/nav_registo"
             android:icon="@drawable/ic_registo"
-            android:title="@string/registo_filme"/>
+            android:title="@string/registo_filme"
+            android:background="@color/white"/>
     </group>
     <group>
         <item
             android:id="@+id/nav_filmes_vistos"
             android:icon="@drawable/ic_filmes_vistos"
-            android:title="@string/filmes_vistos"/>
+            android:title="@string/filmes_vistos"
+            android:background="@color/white"/>
     </group>
     <group>
         <item
             android:id="@+id/nav_extra"
             android:icon="@drawable/ic_person"
-            android:title="@string/pesquisa_por_atores"/>
+            android:title="@string/pesquisa_por_atores"
+            android:background="@color/white"/>
     </group>
 
 </menu>

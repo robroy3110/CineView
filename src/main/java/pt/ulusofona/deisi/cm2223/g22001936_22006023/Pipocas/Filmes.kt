@@ -14,7 +14,6 @@ object Filmes {
             R.drawable.elysium,"Action, Drama, Sci-Fi","In the year 2154, the very wealthy live on a man-made space station while the rest of the population resides on a ruined Earth. A man takes on a mission that could bring equality to the polarized worlds.","Matt Damon, Jodie Foster, Sharlto Copley","2013/08/09",6.6,455061,"https://www.imdb.com/title/tt1535108/"),
         Filme("Interstellar",R.drawable.interstellar,"Adventure, Drama, Sci-Fi","A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.","Matthew McConaughey, Anne Hathaway, Matt Damon","2014/11/07",8.6,1882826,"https://www.imdb.com/title/tt0816692/")
     )
-
     fun procurarFilme(nome : String) : Boolean{
         for (filme in filmes){
             if(filme.nome == nome){

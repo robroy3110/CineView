@@ -42,7 +42,6 @@ class FilmesFragment : Fragment() {
     }
 
     private fun onMovieClick(uuid: String) {
-        Toast.makeText(context, uuid, Toast.LENGTH_LONG).show()
         NavigationManager.goToDetalhesFragment(parentFragmentManager, uuid)
     }
 

@@ -2,8 +2,11 @@ package pt.ulusofona.deisi.cm2223.g22001936_22006023
 
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -74,17 +77,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupDrawerMenu() {
+
         val toggle = ActionBarDrawerToggle(this,
             binding.drawer, binding.toolbar,
             R.string.drawer_open, R.string.drawer_close
         )
         binding.navDrawer.setNavigationItemSelectedListener{
+            /*for (i in 0 until binding.navDrawer.menu.size()) {
+                binding.navDrawer.menu.getItem(i).isChecked = false
+            }
+            menuInflater.inflate(R.menu.drawer_menu,binding.navDrawer.menu)
+            for (i in 0 until binding.navDrawer.menu.size()) {
+                val menuItem = binding.navDrawer.menu.getItem(i)
+                menuItem.actionView = LayoutInflater.from(this).inflate(R.layout.activity_main, null)
+            }
+            // Marque a opção selecionada com uma cor de fundo diferente
+            it.isChecked = true
+            it.actionView.setBackgroundResource(R.color.purple_toolbar)*/
             onClickNavigationItem(it)
+
         }
         binding.drawer.addDrawerListener(toggle)
         toggle.syncState()
-    }
 
+    }
     private fun onClickNavigationItem(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.nav_home ->

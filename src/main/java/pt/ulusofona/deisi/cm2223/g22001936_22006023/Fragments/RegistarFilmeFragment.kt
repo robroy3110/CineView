@@ -160,9 +160,6 @@ class RegistarFilmeFragment : Fragment() {
         return binding.filmeLayout.error == null && binding.autoCompleteTextViewFilmes.text.toString() != "" && binding.autoCompleteTextViewCinemas.text.toString() != "" && binding.cinemaLayout.error == null && binding.ratingBar.rating != 0f && binding.dataEdit.text != null
 
     }
-
-
-
    private fun submeter(){
         if(checkValues()){
             RegistoFilmes.submit(
