@@ -2,6 +2,8 @@ package pt.ulusofona.deisi.cm2223.g22001936_22006023.Fragments
 
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +11,13 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.squareup.picasso.Picasso
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Adapters.PhotoAdapter
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.RegistoFilme
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Pipocas.RegistoFilmes
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.R
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.databinding.FragmentDetalhesBinding
+import java.io.File
 
 
 private const val ARG_FILME_UUID = "ARG_FILME_UUID"
@@ -54,7 +58,20 @@ class DetalhesFragment : Fragment() {
         val photoList: MutableList<Bitmap> = ui.photos
         val adapter = PhotoAdapter(photoList)
         (requireActivity() as AppCompatActivity).supportActionBar?.title = ui.filme.nome
-        binding.ivCartaz.setImageResource(ui.filme.cartaz)
+
+        //val imgFile = File(ui.filme.cartaz)
+        //if (imgFile.exists()) {
+        //    binding.ivCartaz.setImageURI(Uri.fromFile(imgFile))
+        //}
+
+        Picasso.get().load(File(ui.filme.cartaz)).into(binding.ivCartaz)
+
+
+        //val bmImg = BitmapFactory.decodeFile(ui.filme.cartaz)
+        //binding.ivCartaz.setImageBitmap(bmImg)
+
+        //binding.ivCartaz.setImageResource(ui.filme.cartaz)
+
         binding.tvGenero.text = ui.filme.genero
         binding.tvSinopse.text = ui.filme.sinopse
         binding.tvDataLancamento.text = ui.filme.dataLancamento
@@ -79,9 +96,6 @@ class DetalhesFragment : Fragment() {
         }
 
 
-
-
-        //FALTA AS IMAGES E A MAE DA INES SOUSA
     }
 
     companion object {

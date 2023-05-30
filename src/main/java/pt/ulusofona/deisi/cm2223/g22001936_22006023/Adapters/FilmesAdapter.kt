@@ -1,5 +1,7 @@
 package pt.ulusofona.deisi.cm2223.g22001936_22006023.Adapters
 
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -7,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.RegistoFilme
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.R
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.databinding.CardViewBinding
-
+import java.io.File
 
 
 class FilmesAdapter(private val onOperationClick: (String) -> Unit, private var items: List<RegistoFilme> = listOf()) : RecyclerView.Adapter<FilmesAdapter.FilmeViewHolder>() {
@@ -44,7 +46,14 @@ class FilmesAdapter(private val onOperationClick: (String) -> Unit, private var 
             starImageView.setImageResource(R.drawable.ic_star)
             holder.binding.ratingStarsLand?.addView(starImageView)
         }
-        holder.binding.cartaz?.setImageResource(items[position].filme.cartaz)
+        val imgFile = File(items[position].filme.cartaz)
+        if (imgFile.exists()) {
+            holder.binding.cartaz?.setImageURI(Uri.fromFile(imgFile))
+        }
+        //val bmImg = BitmapFactory.decodeFile(items[position].filme.cartaz)
+        //holder.binding.cartaz?.setImageBitmap(bmImg)
+
+        //holder.binding.cartaz?.setImageResource(items[position].filme.cartaz)
     }
 
     override fun getItemCount() = items.size
