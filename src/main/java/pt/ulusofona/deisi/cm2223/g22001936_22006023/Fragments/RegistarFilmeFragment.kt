@@ -55,6 +55,7 @@ class RegistarFilmeFragment : Fragment() {
     private var photoList: MutableList<Bitmap> = mutableListOf()
     var adapter = PhotoAdapter(photoList)
     private lateinit var cineView : CineViewOkhttp
+    var dropDownFilme : MutableList<Filme> = mutableListOf()
 
 
     override fun onCreateView(
@@ -82,7 +83,7 @@ class RegistarFilmeFragment : Fragment() {
         )
         binding.autoCompleteTextViewFilmes.doOnTextChanged { text, start, before, count ->
             val adapterFilmes: ArrayAdapter<Filme> =
-                ArrayAdapter<Filme>(requireContext(), R.layout.select_dialog_item, Filmes.filmes)
+                ArrayAdapter<Filme>(requireContext(), R.layout.select_dialog_item, dropDownFilme)
             val actvFilme = binding.autoCompleteTextViewFilmes
             actvFilme.threshold = 1
             CoroutineScope(Dispatchers.IO).launch {
@@ -90,9 +91,27 @@ class RegistarFilmeFragment : Fragment() {
                     if(result.isSuccess) {
                         CoroutineScope(Dispatchers.Main).launch {
                             binding.filmeLayout.error = null
-                            Filmes.updateFilmes(result.getOrDefault(Filme("",0,"","","","",0.0,0,"")))
+                            if(dropDownFilme.isEmpty()){
+                                dropDownFilme.add(result.getOrDefault(Filme("",0,"","","","",0.0,0,"")))
+                            }else{
+                                dropDownFilme[0] = result.getOrDefault(Filme("",0,"","","","",0.0,0,""))
+                            }
+                            //Filmes.updateFilmes(result.getOrDefault(Filme("",0,"","","","",0.0,0,"")))
                             actvFilme.setAdapter(adapterFilmes)
                             actvFilme.showDropDown()
+
+
+                            /*
+                            *
+                            *----------------------------------------------------------------------------*
+                            |    SO PODEM ACABAR A IMPLEMENTAÇÃO AGORA QUANDO TIVEREM TUDO A RECEBER     |
+                            |   DA API POIS SE APAGAREM OS FILMES DENTRO DO _filmes DO FILMES O COISO    |
+                            |   CRASHA MAS QUANDO REALIZAREM ISSO VAIS A FUNÇÃO DO FILMES.updateFilmes() |
+                            |   E DESCOMENTAS O CÓDIGO QUE ESTÁ LA                                       |
+                            *----------------------------------------------------------------------------*
+                            *
+                            */
+
                         }
                     }else if(result.isFailure){
                         CoroutineScope(Dispatchers.Main).launch {

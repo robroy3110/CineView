@@ -73,6 +73,14 @@ object Filmes {
         if(!procurarFilme(filme.nome)) {
             _filmes.add(filme)
         }
+        /*
+        if(_filmes.isEmpty()){
+            _filmes.add(filme)
+        }else{
+            _filmes[0] = filme
+        }
+        Não se esqueçam de apagar o codigo de cima
+        */
     }
 
 }
