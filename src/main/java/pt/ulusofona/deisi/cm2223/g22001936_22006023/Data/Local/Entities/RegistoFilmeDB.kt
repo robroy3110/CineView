@@ -13,8 +13,8 @@ import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.Filme
 
         @ColumnInfo(name="registoFilme_id")
         @PrimaryKey val registoFilmeId: String,
-        @Embedded val filme: Filme,
-        @Embedded val cinema: Cinema,
+        val filmeId: String,
+        val cinemaId: String,
         val rating: Int,
         val data: String,
         val photos : MutableList<Bitmap>,

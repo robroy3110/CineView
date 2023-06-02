@@ -33,6 +33,7 @@ import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.Filme
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Adapters.PhotoAdapter
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.CineViewOkhttp
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Pipocas.Cinemas
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Pipocas.Filmes
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Pipocas.RegistoFilmes
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.databinding.FragmentRegistarFilmeBinding
 import java.text.SimpleDateFormat
@@ -188,6 +189,7 @@ class RegistarFilmeFragment : Fragment() {
             RegistoFilmes.submit(
                 dropDownFilme[0],
                 Cinemas.pegarCinema(binding.autoCompleteTextViewCinemas.text.toString())!!, binding.ratingBar.rating.toInt(), binding.dataEdit.text.toString(),photoList, binding.observacoesEdit.text.toString())
+            Filmes.add(dropDownFilme[0])
             Toast.makeText(context, "Registo submetido com sucesso!", Toast.LENGTH_LONG).show()
             binding.observacoesEdit.setText("")
             binding.autoCompleteTextViewFilmes.setText("")

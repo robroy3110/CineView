@@ -16,7 +16,9 @@ object Filmes {
 
         return _filmes.toList()
     }
-
+    fun add(filme:Filme){
+        _filmes.add(filme)
+    }
     fun procurarFilme(nome : String) : Boolean{
         for (filme in filmes){
             if(filme.nome == nome){
