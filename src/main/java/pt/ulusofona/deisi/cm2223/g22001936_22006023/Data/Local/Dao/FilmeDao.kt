@@ -15,13 +15,14 @@ interface FilmeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(Filme: List<FilmeDB>)
 
-    @Query("SELECT * FROM Filme ORDER BY data ASC")
-    fun getAll(): List<FilmeDB>
+    @Query("SELECT * FROM Filme WHERE uuid = :id")
+    fun getFromId(id: String): FilmeDB
+
 
     @Query("DELETE FROM Filme")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM Filme ORDER BY data DESC LIMIT 1")
-    fun getLastEntry(): FilmeDB?
+    //@Query("SELECT * FROM Filme ORDER BY data DESC LIMIT 1")
+    //fun getLastEntry(): FilmeDB?
 
 }

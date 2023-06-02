@@ -8,7 +8,7 @@ import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.Rating
 
 @Entity(tableName = "Cinema")
 data class CinemaDB(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = false) val id: Int = 0,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "provider") val provider: String,
     @ColumnInfo(name = "latitude") val latitude: Float,
