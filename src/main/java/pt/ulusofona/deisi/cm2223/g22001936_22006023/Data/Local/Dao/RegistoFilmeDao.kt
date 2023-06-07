@@ -26,4 +26,8 @@ interface RegistoFilmeDao {
     fun deleteAll()
     @Query("SELECT * FROM registoFilme WHERE registoFilmeId = :id")
     fun getFromId(id: String): RegistoFilmeDB
+
+    @Query("SELECT * FROM RegistoFilme LIMIT 4")
+    fun getUltimosRegistos(): List<RegistoFilmeDB>
+
 }

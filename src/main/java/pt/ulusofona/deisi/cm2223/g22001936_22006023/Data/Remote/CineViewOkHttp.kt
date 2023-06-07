@@ -71,7 +71,9 @@ class CineViewOkhttp(
         throw Exception("Operação não permitida")
     }
 
-
+    override fun getUltimosRegistos(onFinished: (Result<List<RegistoFilme>>) -> Unit) {
+        throw Exception("Operação não permitida")
+    }
 
     private fun downloadImage(imageUrl: String, onImageDownloaded: (Bitmap?) -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {

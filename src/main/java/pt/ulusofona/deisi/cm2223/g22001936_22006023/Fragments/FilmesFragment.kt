@@ -2,6 +2,7 @@ package pt.ulusofona.deisi.cm2223.g22001936_22006023.Fragments
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -61,6 +62,7 @@ class FilmesFragment : Fragment() {
                     adapter.updateItems(result.getOrDefault(mutableListOf()))
                 }
             }
+
         }
         
     }

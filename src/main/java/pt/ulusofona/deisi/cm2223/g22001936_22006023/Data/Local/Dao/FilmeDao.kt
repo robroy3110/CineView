@@ -27,6 +27,8 @@ interface FilmeDao {
     @Query("SELECT * FROM Filme")
     fun getAll(): List<FilmeDB>
 
+    @Query("SELECT * FROM Filme ORDER BY votos_imdb DESC LIMIT 4")
+    fun getFilmesComMaisVotos(): List<FilmeDB>
 
     //@Query("SELECT * FROM Filme ORDER BY data DESC LIMIT 1")
     //fun getLastEntry(): FilmeDB?

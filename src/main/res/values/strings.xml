@@ -26,10 +26,10 @@
     <string name="imdb">IMDB</string>
     <string name="observacoes">Observações</string>
     <string name="opiniao">A tua opinião</string>
-    <string name="fotos">Fotos</string>
     <string name="ultimos_registos">Últimos registos</string>
     <string name="filmes_mais_vistos">Filmes mais vistos</string>
     <string name="procurar">Procurar</string>
     <string name="pesquisa_por_atores">Pesquisa Por Atores</string>
+    <string name="fotos">Fotos</string>
 
 </resources>

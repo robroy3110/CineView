@@ -153,15 +153,56 @@ class CineViewDBWithRoom(private val registoFilmeDao: RegistoFilmeDao, private v
                 rating = registoFilme.rating,
                 photos = registoFilme.photos
             )
+            Log.i("APPPPPPPP", "${registo.filme.cartaz}")
             Log.i("APP", "Inserido ${registoFilme.filmeId} no banco de dados")
             onFinished(Result.success(registo))
         }
     }
+
+    override fun getUltimosRegistos(onFinished: (Result<List<RegistoFilme>>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch{
+            var registoFilme = registoFilmeDao.getUltimosRegistos()
+            var registosFilme = registoFilme.map {
+                var filme = filmeDao.getFromId(it.filmeId)
+                var cinema = cinemaDao.getFromId(it.cinemaId)
+                RegistoFilme(
+                    uuid = it.registoFilmeId,
+                    filme = Filme(
+                        filme.nome,
+                        filme.cartaz,
+                        filme.genero,
+                        filme.sinopse,
+                        filme.atores,
+                        filme.dataLancamento,
+                        filme.avaliacaoIMDB,
+                        filme.votosIMDB,
+                        filme.linkIMDB
+                    ),
+                    cinema = Cinema(
+                        cinema.id,
+                        cinema.name,
+                        cinema.provider,
+                        cinema.latitude,
+                        cinema.longitude,
+                        cinema.address,
+                        cinema.postcode,
+                        cinema.county,
+                        cinema.photos,
+                        mutableListOf(),
+                        mutableListOf(),
+                    ),
+                    data = it.data,
+                    observacoes = it.observacoes,
+                    rating = it.rating,
+                    photos = it.photos
+                )
+            }
+
+            onFinished(Result.success(registosFilme))
+        }
+    }
     override fun insertFilmeRegistado(filme: RegistoFilme, onFinished: () -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
-            filmeDao.deleteAll()
-            registoFilmeDao.deleteAll()
-            cinemaDao.deleteAll()
             var registofilme = RegistoFilmeDB(
                                     registoFilmeId = filme.uuid,
                                     filmeId = filme.filme.uuid,
@@ -199,6 +240,9 @@ class CineViewDBWithRoom(private val registoFilmeDao: RegistoFilmeDao, private v
                 hours = "20:00 Wednesday",
             ))
             Log.i("APP", "Inserido ${registofilme.filmeId} no banco de dados")
+            //registoFilmeDao.deleteAll()
+            //filmeDao.deleteAll()
+            //cinemaDao.deleteAll()
             Log.i("Aoo","Vamos ver ${filmeDao.getAll()}")
             Log.i("aoo", "vavo UMA CENA EM CAPS LOCK ISSO DEPOIS NAO SE REPARA ${registoFilmeDao.getAll()}")
             onFinished()

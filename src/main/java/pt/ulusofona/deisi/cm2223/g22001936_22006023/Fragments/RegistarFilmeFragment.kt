@@ -204,7 +204,10 @@ class RegistarFilmeFragment : Fragment() {
                                         photoList.toList(),
                                         binding.observacoesEdit.text.toString()
                                     )
+
                                 ) {}
+                            Filmes.add(filme)
+                            Toast.makeText(context, "Registo submetido com sucesso!", Toast.LENGTH_LONG).show()
                         }
                     } else if (result.isFailure) {
                         CoroutineScope(Dispatchers.Main).launch {
@@ -213,14 +216,6 @@ class RegistarFilmeFragment : Fragment() {
                     }
                 }
             }
-
-
-
-            Filmes.add(dropDownFilme[0])
-            Toast.makeText(context, "Registo submetido com sucesso!", Toast.LENGTH_LONG).show()
-            binding.observacoesEdit.setText("")
-            binding.ratingBar.rating = 5f
-            photoList.clear()
 
         }else{
             Toast.makeText(context, "Erro ao submeter verifique se preencheu bem o formulário", Toast.LENGTH_LONG).show()

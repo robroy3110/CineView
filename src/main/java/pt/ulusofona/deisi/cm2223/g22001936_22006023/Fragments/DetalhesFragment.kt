@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Adapters.PhotoAdapter
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.CineRepository
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.Cinema
@@ -53,20 +57,24 @@ class DetalhesFragment : Fragment() {
         filmeUuid?.let { uuid ->
           CineRepository.getInstance().getFilmeRegistadoById(uuid){result ->
               if(result.isSuccess){
-                  placeData(result.getOrDefault(RegistoFilme(Filme("", Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), "", "", "", "", 0.0, 0, "", ""),
-                      Cinema(
-                          0,
-                          "cinema.name",
-                          "cinema.provider",
-                          1.0f,
-                          1f,
-                          "cinema.address,",
-                          "cinema.postcode",
-                          "cinema.county",
-                          mutableListOf(),
-                          mutableListOf(),
-                          mutableListOf(),
-                      ),0,"", mutableListOf(),"")))
+                  Log.i("APP", "peguei o filme vou agora por")
+                  CoroutineScope(Dispatchers.Main).launch {
+                      Log.i("APP", "vou agora por")
+                      placeData(result.getOrDefault(RegistoFilme(Filme("", Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), "", "", "", "", 0.0, 0, "", ""),
+                          Cinema(
+                              0,
+                              "cinema.name",
+                              "cinema.provider",
+                              1.0f,
+                              1f,
+                              "cinema.address,",
+                              "cinema.postcode",
+                              "cinema.county",
+                              mutableListOf(),
+                              mutableListOf(),
+                              mutableListOf(),
+                          ),0,"", mutableListOf(),"")))
+                  }
               }
 
           }
@@ -108,7 +116,7 @@ class DetalhesFragment : Fragment() {
         }
 
         if (ui.photos.isNotEmpty()){
-            binding.titlePhotos.text = "@string/photos"
+            binding.titlePhotos.text = getString(R.string.fotos)
             binding.rvPhotos.layoutManager = LinearLayoutManager(requireContext(),
                 LinearLayoutManager.HORIZONTAL,false)
             binding.rvPhotos.adapter = adapter

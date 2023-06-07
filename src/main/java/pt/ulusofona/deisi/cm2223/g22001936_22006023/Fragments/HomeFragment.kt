@@ -6,11 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.RegistoFilmeDao
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.FilmeDao
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Adapters.FilmesAdapter
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Adapters.HomeAdapter
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.CineViewApplication
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.CineRepository
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.NavigationManager
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Pipocas.Filmes
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Pipocas.RegistoFilmes
@@ -42,8 +48,13 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        val ultimosRegistos = RegistoFilmes.getLasts()
-        adapterRegistos.updateItems(ultimosRegistos)
+        val ultimosRegistos = CineRepository.getInstance().getUltimosRegistos { result ->
+            CoroutineScope(Dispatchers.Main).launch {
+                if (result.isSuccess) {
+                    adapterRegistos.updateItems(result.getOrDefault(mutableListOf()))
+                }
+            }
+        }
 
         binding.rvUltimosRegistos.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUltimosRegistos.adapter = adapterRegistos

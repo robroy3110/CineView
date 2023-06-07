@@ -20,18 +20,18 @@ class CineRepository private constructor(
             local.getFilmesRegistados { result ->
                 if (result.isSuccess) {
                     val filmes = result.getOrNull()!!
-                    filmes.map{
-                        remote.searchMovie(it.filme.nome){ result ->
-                            if(result.isSuccess){
-                                it.filme = result.getOrNull()!!
-                                local.clearFilmeRegistadoById(it.filme.uuid) {
-                                    Log.i("APP", "Banco de dados limpo")
-                                    local.insertFilmeRegistado(it) {}
-                                }
-                            }
-                        }
-
-                    }
+                    //filmes.map{
+                    //    remote.searchMovie(it.filme.nome){ result ->
+                    //        if(result.isSuccess){
+                    //            it.filme = result.getOrNull()!!
+                    //            local.clearFilmeRegistadoById(it.filme.uuid) {
+                    //                Log.i("APP", "Banco de dados limpo")
+                    //                local.insertFilmeRegistado(it) {}
+                    //            }
+                    //        }
+                    //    }
+//
+                    //}
                     Log.i("APP", "Obtidos ${filmes.size} filmes do servidor")
                     onFinished(Result.success(filmes))
                 } else {
@@ -65,6 +65,10 @@ class CineRepository private constructor(
     }
     override fun getFilmeRegistadoById(id:String,onFinished: (Result<RegistoFilme>) -> Unit){
         local.getFilmeRegistadoById(id,onFinished)
+    }
+
+    override fun getUltimosRegistos(onFinished: (Result<List<RegistoFilme>>) -> Unit) {
+        local.getUltimosRegistos(onFinished)
     }
     companion object {
         private var instance: CineRepository? = null
