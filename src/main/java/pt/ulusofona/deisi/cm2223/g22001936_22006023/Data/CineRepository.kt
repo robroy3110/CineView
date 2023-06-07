@@ -51,6 +51,7 @@ class CineRepository private constructor(
 
     override fun insertFilmeRegistado(filme: RegistoFilme, onFinished: () -> Unit) {
         local.insertFilmeRegistado(filme) {
+            Log.i("Aoo","Inseri o pau na panela ${filme.filme.uuid}")
             onFinished()
         }
     }
@@ -62,7 +63,9 @@ class CineRepository private constructor(
     override fun searchMovie(title: String, onFinished: (Result<Filme>) -> Unit) {
         throw Exception("Operação não permitida")
     }
-
+    override fun getFilmeRegistadoById(id:String,onFinished: (Result<RegistoFilme>) -> Unit){
+        local.getFilmeRegistadoById(id,onFinished)
+    }
     companion object {
         private var instance: CineRepository? = null
 

@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Adapters.FilmesAdapter
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.CineRepository
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.CineView
@@ -54,7 +57,9 @@ class FilmesFragment : Fragment() {
         binding.rvFilmes.adapter = adapter
         CineRepository.getInstance().getFilmesRegistados { result ->
             if (result.isSuccess) {
-                adapter.updateItems(result.getOrDefault(mutableListOf()))
+                CoroutineScope(Dispatchers.Main).launch{
+                    adapter.updateItems(result.getOrDefault(mutableListOf()))
+                }
             }
         }
         

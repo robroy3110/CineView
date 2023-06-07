@@ -10,7 +10,7 @@ import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.Local.Entities.FilmeDB
 @Dao
 interface CinemaDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(Cinema: CinemaDB)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -23,7 +23,7 @@ interface CinemaDao {
     //fun getAll(): List<CinemaDB>
 
     @Query("DELETE FROM Cinema")
-    suspend fun deleteAll()
+    fun deleteAll()
 
     //@Query("SELECT * FROM Cinema ORDER BY data DESC LIMIT 1")
     //fun getLastEntry(): CinemaDB?

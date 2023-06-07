@@ -13,6 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Adapters.PhotoAdapter
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.CineRepository
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.Cinema
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.Filme
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.RegistoFilme
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Pipocas.RegistoFilmes
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.R
@@ -48,14 +51,29 @@ class DetalhesFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         filmeUuid?.let { uuid ->
-          val filme = RegistoFilmes.getFilmeById(uuid)
-          filme.let { placeData(it) }
+          CineRepository.getInstance().getFilmeRegistadoById(uuid){result ->
+              if(result.isSuccess){
+                  placeData(result.getOrDefault(RegistoFilme(Filme("", Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), "", "", "", "", 0.0, 0, "", ""),
+                      Cinema(
+                          0,
+                          "cinema.name",
+                          "cinema.provider",
+                          1.0f,
+                          1f,
+                          "cinema.address,",
+                          "cinema.postcode",
+                          "cinema.county",
+                          mutableListOf(),
+                          mutableListOf(),
+                          mutableListOf(),
+                      ),0,"", mutableListOf(),"")))
+              }
+
+          }
         }
     }
-
-
     private fun placeData(ui: RegistoFilme) {
-        val photoList: MutableList<Bitmap> = ui.photos
+        val photoList: List<Bitmap> = ui.photos
         val adapter = PhotoAdapter(photoList)
         (requireActivity() as AppCompatActivity).supportActionBar?.title = ui.filme.nome
 

@@ -4,8 +4,10 @@ import android.graphics.Bitmap
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 
 @Entity(tableName = "Filme")
+@TypeConverters(BitmapListConverter::class)
 data class FilmeDB(
     @PrimaryKey val uuid: String,
     @ColumnInfo(name = "nome") val nome: String,

@@ -8,7 +8,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.R
 
-class PhotoAdapter(private val photoList: MutableList<Bitmap>) :
+class PhotoAdapter(private val photoList: List<Bitmap>) :
     RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
 
     class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

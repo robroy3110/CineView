@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -96,7 +97,7 @@ class RegistarFilmeFragment : Fragment() {
                             }else{
                                 dropDownFilme[0] = result.getOrDefault(Filme("",Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888),"","","","",0.0,0,""))
                             }
-
+                            Log.i("Aoo","${dropDownFilme}")
                             actvFilme.setAdapter(adapterFilmes)
                             actvFilme.showDropDown()
 
@@ -188,20 +189,39 @@ class RegistarFilmeFragment : Fragment() {
     }
    private fun submeter(){
         if(checkValues()){
-        CoroutineScope(Dispatchers.Main).launch{
-            CineRepository.getInstance().insertFilmeRegistado(
-                RegistoFilme(dropDownFilme[0],
-            Cinemas.pegarCinema(binding.autoCompleteTextViewCinemas.text.toString())!!, binding.ratingBar.rating.toInt(), binding.dataEdit.text.toString(),photoList, binding.observacoesEdit.text.toString())
-            ){
-                Filmes.add(dropDownFilme[0])
-                Toast.makeText(context, "Registo submetido com sucesso!", Toast.LENGTH_LONG).show()
-                binding.observacoesEdit.setText("")
-                binding.autoCompleteTextViewFilmes.setText("")
-                binding.autoCompleteTextViewCinemas.setText("")
-                binding.ratingBar.rating = 5f
-                photoList.clear()
+            CoroutineScope(Dispatchers.IO).launch {
+                cineView.searchMovie(binding.autoCompleteTextViewFilmes.text.toString()) { result ->
+                    if (result.isSuccess) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            Log.i("Aoo", "${dropDownFilme}")
+                                val filme = result.getOrDefault(Filme("", Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), "", "", "", "", 0.0, 0, "", ""))
+                                CineRepository.getInstance().insertFilmeRegistado(
+                                    RegistoFilme(
+                                        filme,
+                                        Cinemas.pegarCinema(binding.autoCompleteTextViewCinemas.text.toString())!!,
+                                        binding.ratingBar.rating.toInt(),
+                                        binding.dataEdit.text.toString(),
+                                        photoList.toList(),
+                                        binding.observacoesEdit.text.toString()
+                                    )
+                                ) {}
+                        }
+                    } else if (result.isFailure) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            // Lógica de tratamento quando a busca do filme falha
+                        }
+                    }
+                }
             }
-         }
+
+
+
+            Filmes.add(dropDownFilme[0])
+            Toast.makeText(context, "Registo submetido com sucesso!", Toast.LENGTH_LONG).show()
+            binding.observacoesEdit.setText("")
+            binding.ratingBar.rating = 5f
+            photoList.clear()
+
         }else{
             Toast.makeText(context, "Erro ao submeter verifique se preencheu bem o formulário", Toast.LENGTH_LONG).show()
         }

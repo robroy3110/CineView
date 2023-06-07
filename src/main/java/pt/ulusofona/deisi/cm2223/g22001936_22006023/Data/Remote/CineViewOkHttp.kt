@@ -56,7 +56,9 @@ class CineViewOkhttp(
     override fun insertFilmesRegistados(filmes: List<RegistoFilme>, onFinished: () -> Unit) {
         throw Exception("Operação não permitida")
     }
-
+    override fun getFilmeRegistadoById(id:String,onFinished: (Result<RegistoFilme>) -> Unit){
+        throw Exception("Operação não permitida")
+    }
     override fun insertFilmeRegistado(filme: RegistoFilme, onFinished: () -> Unit) {
         throw Exception("Operação não permitida")
     }
@@ -114,16 +116,17 @@ class CineViewOkhttp(
 
         val imageUrl = cartazUrl
         var filme = Filme("",Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888),"","","","",0.0,0,"")
-
+        var finished = false
         downloadImage(imageUrl) { bitmap ->
             filme = if (bitmap != null) {
                 Filme(nome, bitmap, genero, sinopse, atores, dataLancamento, avaliacaoIMDB, votosIMDB, linkIMDB)
             } else {
                 Filme(nome, null, genero, sinopse, atores, dataLancamento, avaliacaoIMDB, votosIMDB, linkIMDB)
             }
+            finished = true
         }
 
-        while (filme.nome == ""){
+        while (!finished){
             delay(100)
         }
 

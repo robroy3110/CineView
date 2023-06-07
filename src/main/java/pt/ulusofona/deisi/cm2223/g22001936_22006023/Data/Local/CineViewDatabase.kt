@@ -4,12 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.CinemaDao
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.FilmeDao
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.Local.Entities.BitmapListConverter
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.Local.Entities.CinemaDB
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.Local.Entities.FilmeDB
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.Local.Entities.RegistoFilmeDB
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.RegistoFilmeDao
 
-@Database(entities = [RegistoFilmeDB::class], version = 1)
+@Database(entities = [RegistoFilmeDB::class, FilmeDB::class, CinemaDB::class], version = 1)
 abstract class CineViewDatabase : RoomDatabase() {
 
     abstract fun registoFilmeDao(): RegistoFilmeDao
@@ -27,7 +31,6 @@ abstract class CineViewDatabase : RoomDatabase() {
                         CineViewDatabase::class.java,
                         "movies_db"
                     )
-                        .fallbackToDestructiveMigration()
                         .build()
                 }
                 return instance as CineViewDatabase

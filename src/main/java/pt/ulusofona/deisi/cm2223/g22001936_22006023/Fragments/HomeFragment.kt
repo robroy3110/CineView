@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Adapters.FilmesAdapter
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Adapters.HomeAdapter
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.CineViewApplication
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.NavigationManager
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Pipocas.Filmes
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Pipocas.RegistoFilmes
@@ -30,7 +31,6 @@ class HomeFragment : Fragment() {
     ): View{
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Home"
-
         return binding.root
     }
 
