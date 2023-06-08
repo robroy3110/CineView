@@ -1,17 +1,26 @@
 package pt.ulusofona.deisi.cm2223.g22001936_22006023.Fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.location.Geocoder
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.Data.CineRepository
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Location.CineViewLocation
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.Location.OnLocationChangedListener
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.NavigationManager
@@ -37,10 +46,30 @@ class MapFragment : Fragment(), OnLocationChangedListener {
             this.map = map
             map.isMyLocationEnabled = true
             CineViewLocation.registerListener(this)
-            map.addMarker(MarkerOptions()
-                .position(LatLng(38.75814, -9.15179))
-                .title("ULHT")
-            )
+            CineRepository.getInstance().getFilmesRegistados { result ->
+
+                if (result.isSuccess) {
+
+                    var registos = result.getOrDefault(mutableListOf())
+                    registos.forEach {
+                        val icon = getMarkerIconByRating(it.rating)
+                        val markerIcon = context?.let { getBitmapFromVector(it, icon) }
+                        val markerBitmapDescriptor = markerIcon?.let {
+                            BitmapDescriptorFactory.fromBitmap(
+                                it
+                            )
+                        }
+                        CoroutineScope(Dispatchers.Main).launch {
+                            map.addMarker(MarkerOptions()
+                                .position(LatLng(it.cinema.latitude.toDouble(), it.cinema.longitude.toDouble()))
+                                .title(it.filme.nome)
+                                .snippet("Rating: " + it.rating + ", Cinema: " + it.cinema.name)
+                                .icon(markerBitmapDescriptor)
+                            )
+                        }
+                    }
+                }
+            }
         }
         binding.fab.setOnClickListener { view ->
             NavigationManager.goToFilmesFragment(parentFragmentManager)
@@ -83,6 +112,29 @@ class MapFragment : Fragment(), OnLocationChangedListener {
     override fun onDestroy() {
         super.onDestroy()
         CineViewLocation.unregisterListener()
+    }
+
+    private fun getMarkerIconByRating(rating: Int): Int {
+        return when (rating) {
+            in 1..2 -> R.drawable.marker_muitofraco
+            in 3..4 -> R.drawable.marker_fraco
+            in 5..6 -> R.drawable.marker_medio
+            in 7..8 -> R.drawable.marker_bom
+            in 9..10 -> R.drawable.marker_good
+            else -> R.drawable.marker_excelente
+        }
+    }
+    private fun getBitmapFromVector(context: Context, vectorResId: Int): Bitmap? {
+        val vectorDrawable = ContextCompat.getDrawable(context, vectorResId)
+        val bitmap = Bitmap.createBitmap(
+            vectorDrawable!!.intrinsicWidth * 2,
+            vectorDrawable.intrinsicHeight * 2,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
+        vectorDrawable.draw(canvas)
+        return bitmap
     }
 
 }
