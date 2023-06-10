@@ -2,21 +2,18 @@ package pt.ulusofona.deisi.cm2223.g22001936_22006023
 
 import android.content.Context
 import android.content.DialogInterface
-import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import com.google.gson.Gson
 import org.json.JSONArray
 import org.json.JSONObject
-import pt.ulusofona.deisi.cm2223.g22001936_22006023.Models.Cinema
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Cinema
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Horario
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Rating
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.databinding.ActivityMainBinding
 import kotlin.Boolean
 import kotlin.Long
@@ -36,39 +33,55 @@ class MainActivity : AppCompatActivity() {
         val jsonContent = this.assets.open("cinemas.json").bufferedReader().use {
             it.readText()
         }
+
+        var cinemasList: MutableList<Cinema> = mutableListOf()
+        var horarioList: MutableList<Horario> = mutableListOf()
         val cinemasJson = JSONObject(jsonContent)
         val cinemas = cinemasJson.getJSONArray("cinemas") as JSONArray
-        Log.i("APP JSON",""+jsonContent)
         for (i in 0 until cinemas.length()){
-            val cinema_id = cinemas.getJSONObject(i).get("cinema_id")
-            val cinema_name = cinemas.getJSONObject(i).get("cinema_name")
-            val cinema_provider = cinemas.getJSONObject(i).get("cinema_provider")
-            val latitude = cinemas.getJSONObject(i).get("latitude")
-            val longitude = cinemas.getJSONObject(i).get("longitude")
-            val address = cinemas.getJSONObject(i).get("address")
-            val postcode = cinemas.getJSONObject(i).get("postcode")
-            val county = cinemas.getJSONObject(i).get("county")
-            val ratings = cinemasJson.getJSONArray("ratings") as JSONArray
-            for (j in 0 until ratings.length()) {
-                val category = ratings.getJSONObject(j).get("category")
-                val score = ratings.getJSONObject(j).get("score")
+            val cinema = cinemas.getJSONObject(i)
+            var ratingList : MutableList<Rating> = mutableListOf()
+            var photoList : MutableList<String> = mutableListOf()
+            var logoUrl = ""
+            var photos : JSONArray
+            var ratings : JSONArray
+            val cinemaid = cinema.getInt("cinema_id")
+            val cinemaname = cinema.getString("cinema_name")
+            val cinemaprovider = cinema.getString("cinema_provider")
+            logoUrl = cinema.optString("logo_url")
+            val latitude = cinema.getDouble("latitude").toFloat()
+            val longitude = cinema.getDouble("longitude").toFloat()
+            val address = cinema.getString("address")
+            val postcode = cinema.getString("postcode")
+            val county = cinema.getString("county")
+            if(cinema.has("photos")){
+                photos = cinema.getJSONArray("photos") as JSONArray
+                for (j in 0 until photos.length()) {
+                    photoList.add(photos.get(j).toString())
+                }
             }
-            val openingHours = cinemasJson.getJSONObject("opening_hours")
-            val daysOfWeek = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-            val openingClosingTimes = mutableMapOf<String, Pair<String, String>>()
-            for (day in daysOfWeek) {
-                val dayObject = openingHours.getJSONObject(day)
-                val openTime = dayObject.getString("open")
-                val closeTime = dayObject.getString("close")
-                openingClosingTimes[day] = Pair(openTime, closeTime)
+            if(cinema.has("ratings")){
+                ratings = cinema.getJSONArray("ratings") as JSONArray
+                for(j in 0 until ratings.length()){
+                    ratingList.add(Rating(ratings.getJSONObject(j).getString("category"),ratings.getJSONObject(j).getInt("score")))
+                }
             }
+            if (cinema.has("opening_hours")) {
+                    val openingHours = cinema.getJSONObject("opening_hours")
+                    val daysOfWeek = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
+                    for (index in 0 until daysOfWeek.size) {
+                        val day = daysOfWeek[index]
 
-// Exemplo de acesso aos horários de abertura e fechamento para segunda-feira:
-            val mondayOpen = openingClosingTimes["Monday"]?.first
-            val mondayClose = openingClosingTimes["Monday"]?.second
-
-
+                        if (openingHours.has(index.toString())) {
+                            val dayObject = openingHours.getJSONObject(index.toString())
+                            val openTime = dayObject.getString("open")
+                            val closeTime = dayObject.getString("close")
+                            horarioList.add(Horario(day, openTime, closeTime))
+                        }
+                    }
+                }
+            cinemasList.add(Cinema(cinemaid,cinemaname,cinemaprovider, logoUrl,latitude,longitude,address,postcode,county,photoList,ratingList,horarioList))
         }
 
 

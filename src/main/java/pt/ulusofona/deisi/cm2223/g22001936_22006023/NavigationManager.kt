@@ -2,7 +2,7 @@ package pt.ulusofona.deisi.cm2223.g22001936_22006023
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import pt.ulusofona.deisi.cm2223.g22001936_22006023.Fragments.*
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.fragments.*
 
 object NavigationManager {
 
