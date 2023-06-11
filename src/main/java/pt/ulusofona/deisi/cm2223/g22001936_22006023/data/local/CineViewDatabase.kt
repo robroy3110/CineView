@@ -11,7 +11,7 @@ import pt.ulusofona.deisi.cm2223.g22001936_22006023.data.local.dao.RatingDao
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.data.local.entities.*
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.data.local.dao.RegistoFilmeDao
 
-@Database(entities = [RegistoFilmeDB::class, FilmeDB::class, CinemaDB::class, HorarioDB::class,RatingDB::class], version = 4)
+@Database(entities = [RegistoFilmeDB::class, FilmeDB::class, CinemaDB::class, HorarioDB::class,RatingDB::class], version = 6)
 abstract class CineViewDatabase : RoomDatabase() {
 
     abstract fun registoFilmeDao(): RegistoFilmeDao

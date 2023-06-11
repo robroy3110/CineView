@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import org.json.JSONArray
 import org.json.JSONObject
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.data.CineRepository
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Cinema
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Horario
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Rating
@@ -35,11 +36,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         var cinemasList: MutableList<Cinema> = mutableListOf()
-        var horarioList: MutableList<Horario> = mutableListOf()
         val cinemasJson = JSONObject(jsonContent)
         val cinemas = cinemasJson.getJSONArray("cinemas") as JSONArray
         for (i in 0 until cinemas.length()){
             val cinema = cinemas.getJSONObject(i)
+            var horarioList: MutableList<Horario> = mutableListOf()
             var ratingList : MutableList<Rating> = mutableListOf()
             var photoList : MutableList<String> = mutableListOf()
             var photos : JSONArray
@@ -75,8 +76,8 @@ class MainActivity : AppCompatActivity() {
                     for (index in 0 until daysOfWeek.size) {
                         val day = daysOfWeek[index]
 
-                        if (openingHours.has(index.toString())) {
-                            val dayObject = openingHours.getJSONObject(index.toString())
+                        if (openingHours.has(day)) {
+                            val dayObject = openingHours.getJSONObject(day)
                             val openTime = dayObject.getString("open")
                             val closeTime = dayObject.getString("close")
                             horarioList.add(Horario(day, openTime, closeTime))
@@ -86,6 +87,7 @@ class MainActivity : AppCompatActivity() {
             cinemasList.add(Cinema(cinemaid,cinemaname,cinemaprovider, logoUrl,latitude,longitude,address,postcode,county,photoList,ratingList,horarioList))
         }
 
+    CineRepository.getInstance().insertAllCinemas(cinemasList)
 
     }
 

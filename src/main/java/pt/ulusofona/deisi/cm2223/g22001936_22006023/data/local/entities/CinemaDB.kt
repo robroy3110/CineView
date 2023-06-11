@@ -18,6 +18,4 @@ data class CinemaDB(
     @ColumnInfo(name = "postcode") val postcode: String,
     @ColumnInfo(name = "county") val county: String,
     @ColumnInfo(name = "photos") val photos: List<String>,
-    @ColumnInfo(name = "ratingsId") val ratingsId: Int,
-    @ColumnInfo(name = "horarioId") val horarioId: Int
 )

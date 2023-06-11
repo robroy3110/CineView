@@ -27,6 +27,16 @@ class CineViewApplication : Application() {
         Log.i("APP", "Initialized repository")
     }
 
+    private fun initCineViewRoom(): CineViewDBWithRoom {
+        return CineViewDBWithRoom(
+            CineViewDatabase.getInstance(applicationContext).registoFilmeDao(),
+            CineViewDatabase.getInstance(applicationContext).FilmeDao(),
+            CineViewDatabase.getInstance(applicationContext).CinemaDao(),
+            CineViewDatabase.getInstance(applicationContext).HorarioDao(),
+            CineViewDatabase.getInstance(applicationContext).RatingDao(),
+        )
+    }
+
 
 
 }

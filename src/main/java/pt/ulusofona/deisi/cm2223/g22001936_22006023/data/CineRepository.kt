@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.data.remote.ConnectivityUtil
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.CineView
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Cinema
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Filme
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.RegistoFilme
 import java.lang.IllegalStateException
@@ -62,6 +63,11 @@ class CineRepository private constructor(
     override fun searchMovie(title: String, onFinished: (Result<Filme>) -> Unit) {
         throw Exception("Operação não permitida")
     }
+
+    override fun insertAllCinemas(cinemas: List<Cinema>) {
+        local.insertAllCinemas(cinemas)
+    }
+
     override fun getFilmeRegistadoById(id:String,onFinished: (Result<RegistoFilme>) -> Unit){
         local.getFilmeRegistadoById(id,onFinished)
     }

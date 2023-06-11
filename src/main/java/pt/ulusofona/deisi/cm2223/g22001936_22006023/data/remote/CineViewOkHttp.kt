@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import okhttp3.*
 import org.json.JSONObject
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.CineView
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Cinema
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Filme
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.RegistoFilme
 import java.io.IOException
@@ -51,6 +52,10 @@ class CineViewOkhttp(
                 }
             }
         })
+    }
+
+    override fun insertAllCinemas(cinemas: List<Cinema>) {
+        throw Exception("Operação não permitida")
     }
 
     override fun insertFilmesRegistados(filmes: List<RegistoFilme>, onFinished: () -> Unit) {

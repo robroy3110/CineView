@@ -2,6 +2,7 @@ package pt.ulusofona.deisi.cm2223.g22001936_22006023.models
 
 abstract class CineView {
     abstract fun searchMovie(title: String, onFinished: (Result<Filme>) -> Unit)
+    abstract fun insertAllCinemas(cinemas: List<Cinema>)
     abstract fun getFilmesRegistados(onFinished: (Result<List<RegistoFilme>>) -> Unit)
     abstract fun getUltimosRegistos(onFinished: (Result<List<RegistoFilme>>) -> Unit)
     abstract fun getAllAtores(onFinished: (Result<String>) -> Unit)
@@ -12,4 +13,5 @@ abstract class CineView {
     abstract fun insertFilmesRegistados(filmes: List<RegistoFilme>,onFinished: () -> Unit)
     abstract fun insertFilmeRegistado(filme: RegistoFilme, onFinished: () -> Unit)
     abstract fun clearFilmeRegistadoById(id: String, onFinished: () -> Unit)
+
 }

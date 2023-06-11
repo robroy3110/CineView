@@ -2,6 +2,7 @@ package pt.ulusofona.deisi.cm2223.g22001936_22006023.data.local
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.room.PrimaryKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,8 +20,6 @@ class CineViewDBWithRoom(private val registoFilmeDao: RegistoFilmeDao, private v
     override fun insertFilmesRegistados(filmes: List<RegistoFilme>, onFinished: () -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             filmes.forEach {
-                
-                
                 filmeDao.insert(FilmeDB(
                     uuid = it.filme.uuid,
                     nome = it.filme.nome,
@@ -32,39 +31,6 @@ class CineViewDBWithRoom(private val registoFilmeDao: RegistoFilmeDao, private v
                     avaliacaoIMDB = it.filme.avaliacaoIMDB,
                     votosIMDB = it.filme.votosIMBD,
                     linkIMDB = it.filme.linkIMDB,
-                ))
-                for(rating in it.cinema.ratings){
-                    ratingDao.insert(
-                        RatingDB(
-                            ratingId = it.cinema.id,
-                            category = rating.category,
-                            score = rating.score
-                        )
-                    )
-                }
-                for(horario in it.cinema.hours){
-                    horarioDao.insert(
-                        HorarioDB(
-                            horarioId = it.cinema.id,
-                            day = horario.dia,
-                            openHour = horario.openHour,
-                            closeHour = horario.closeHour
-                        )
-                    )
-                }
-                cinemaDao.insert(CinemaDB(
-                    id = it.cinema.id,
-                    name = it.cinema.name,
-                    provider = it.cinema.provider,
-                    logoUrl = it.cinema.logoUrl,
-                    latitude = it.cinema.latitude,
-                    longitude = it.cinema.longitude,
-                    address = it.cinema.address,
-                    postcode = it.cinema.postcode,
-                    county = it.cinema.county,
-                    photos = it.cinema.photos,
-                    ratingsId = it.cinema.id,
-                    horarioId = it.cinema.id,
                 ))
             }
             filmes.map {
@@ -89,8 +55,47 @@ class CineViewDBWithRoom(private val registoFilmeDao: RegistoFilmeDao, private v
     }
 
     override fun searchMovie(title: String, onFinished: (Result<Filme>) -> Unit) {
-        TODO("Not yet implemented")
+        throw Exception("Operação não permitida")
     }
+
+    override fun insertAllCinemas(cinemas: List<Cinema>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            cinemas.forEach {
+                for(rating in it.ratings){
+                    ratingDao.insert(
+                        RatingDB(
+                            ratingId = it.id,
+                            category = rating.category,
+                            score = rating.score
+                        )
+                    )
+                }
+                for(horario in it.hours){
+                    horarioDao.insert(
+                        HorarioDB(
+                            horarioId = it.id,
+                            day = horario.dia,
+                            openHour = horario.openHour,
+                            closeHour = horario.closeHour
+                        )
+                    )
+                }
+                cinemaDao.insert(CinemaDB(
+                    id = it.id,
+                    name = it.name,
+                    provider = it.provider,
+                    logoUrl = it.logoUrl,
+                    latitude = it.latitude,
+                    longitude = it.longitude,
+                    address = it.address,
+                    postcode = it.postcode,
+                    county = it.county,
+                    photos = it.photos,
+                ))
+            }
+        }
+    }
+
     fun bitmapToByteArray(bitmap: Bitmap?): ByteArray? {
         val stream = ByteArrayOutputStream()
         bitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
@@ -352,39 +357,6 @@ class CineViewDBWithRoom(private val registoFilmeDao: RegistoFilmeDao, private v
                 linkIMDB = filme.filme.linkIMDB,
             )
             filmeDao.insert(filmeinserir)
-            for(rating in filme.cinema.ratings){
-                ratingDao.insert(
-                    RatingDB(
-                        ratingId = filme.cinema.id,
-                        category = rating.category,
-                        score = rating.score
-                    )
-                )
-            }
-            for(horario in filme.cinema.hours){
-                horarioDao.insert(
-                    HorarioDB(
-                        horarioId = filme.cinema.id,
-                        day = horario.dia,
-                        openHour = horario.openHour,
-                        closeHour = horario.closeHour
-                    )
-                )
-            }
-            cinemaDao.insert(CinemaDB(
-                id = filme.cinema.id,
-                name = filme.cinema.name,
-                provider = filme.cinema.provider,
-                logoUrl = filme.cinema.logoUrl,
-                latitude = filme.cinema.latitude,
-                longitude = filme.cinema.longitude,
-                address = filme.cinema.address,
-                postcode = filme.cinema.postcode,
-                county = filme.cinema.county,
-                photos = filme.cinema.photos,
-                ratingsId = filme.cinema.id,
-                horarioId = filme.cinema.id
-            ))
             Log.i("APP", "Inserido ${registofilme.filmeId} no banco de dados")
             Log.i("Aoo","Vamos ver ${filmeDao.getAll()}")
             Log.i("aoo", "vavo UMA CENA EM CAPS LOCK ISSO DEPOIS NAO SE REPARA ${registoFilmeDao.getAll()}")
