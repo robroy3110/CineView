@@ -46,7 +46,7 @@ import java.util.*
 
 class RegistarFilmeFragment : Fragment() {
 
-    private val REQUEST_CAMERA_PERMISSION = 1
+    private val REQUEST_CAMERA_PERMISSION = 3
     private val CAMERA_PERMISSION_CODE = 100
     private lateinit var binding: FragmentRegistarFilmeBinding
     private val TAG = RegistarFilmeFragment::class.java.simpleName
