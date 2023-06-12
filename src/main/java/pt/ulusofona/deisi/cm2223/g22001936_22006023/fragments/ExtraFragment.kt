@@ -41,10 +41,10 @@ class ExtraFragment : Fragment() {
 
         CineRepository.getInstance().getAllAtores { result ->
             if (result.isSuccess) {
-                val atores = result.getOrDefault("").split(", ")
+                val atores = result.getOrDefault("").split(", ").toSet()
 
                 CoroutineScope(Dispatchers.Main).launch {
-                    adapterAtores = ArrayAdapter<String>(requireContext(), R.layout.select_dialog_item, atores)
+                    adapterAtores = ArrayAdapter<String>(requireContext(), R.layout.select_dialog_item, atores.toList())
 
                     actvAtores.setAdapter(adapterAtores)
                 }
