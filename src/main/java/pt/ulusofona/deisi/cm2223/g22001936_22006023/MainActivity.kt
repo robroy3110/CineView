@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -12,25 +14,28 @@ import androidx.core.view.GravityCompat
 import org.json.JSONArray
 import org.json.JSONObject
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.data.CineRepository
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.databinding.ActivityMainBinding
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Cinema
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Horario
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Rating
-import pt.ulusofona.deisi.cm2223.g22001936_22006023.databinding.ActivityMainBinding
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.apply
-import kotlin.let
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
+    private var handler: Handler? = null
+    private var countdown = 10
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         NavigationManager.goToHomeFragment(supportFragmentManager)
+
+        handler = Handler(Looper.getMainLooper());
+
+        // Exibir o AlertDialog quando necessário
+
+
         val jsonContent = this.assets.open("cinemas.json").bufferedReader().use {
             it.readText()
         }
@@ -98,10 +103,50 @@ class MainActivity : AppCompatActivity() {
         setupDrawerMenu()
 
         binding.ivMic.setOnClickListener {
-            onClick(this)
+            exibirAlertDialog()
         }
     }
 
+    fun exibirAlertDialog() {
+        var builder = AlertDialog.Builder(this);
+        builder.setTitle("Pesquisar por filmes com microfone");
+
+        // Definir o conteúdo do AlertDialog como um contador regressivo
+        builder.setMessage(Integer.toString(countdown));
+
+        builder.setCancelable(false); // Impedir que o usuário feche o diálogo
+
+        builder.setPositiveButton("Fechar", DialogInterface.OnClickListener {dialog, id ->
+            dialog.dismiss()
+        })
+
+        var alertDialog = builder.create();
+
+        alertDialog.setOnShowListener { dialog ->
+
+                startCountdown(alertDialog);
+
+        }
+
+        alertDialog.show()
+    }
+
+    fun startCountdown(alertDialog :AlertDialog) {
+        handler?.postDelayed(Runnable() {
+                countdown--
+
+                // Atualizar a mensagem do AlertDialog com o novo valor do contador
+                alertDialog.setMessage(Integer.toString(countdown))
+
+                if (countdown > 0) {
+                    // Continuar o contador regressivo
+                    startCountdown(alertDialog)
+                } else {
+                    // Contagem regressiva concluída, fechar o AlertDialog
+                    alertDialog.dismiss()
+                }
+        },1000)
+    }
 
     fun onClick(context : Context) {
         var done = false
