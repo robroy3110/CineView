@@ -1,4 +1,5 @@
 package pt.ulusofona.deisi.cm2223.g22001936_22006023.data.remote
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import com.squareup.picasso.Picasso
@@ -74,6 +75,22 @@ class CineViewOkhttp(
     }
 
     override fun atualizarFilmeDoRegisto(registoFilmeId: String, novoFilmeId: String) {
+        throw Exception("Operação não permitida")
+    }
+
+    override fun existsCinema(nome: String, onFinished: (Result<Boolean>) -> Unit) {
+        throw Exception("Operação não permitida")
+    }
+
+    override fun getCinema(nome: String, onFinished: (Result<Cinema>) -> Unit) {
+        throw Exception("Operação não permitida")
+    }
+
+    override fun getAllCinemas(onFinished: (Result<List<Cinema>>) -> Unit) {
+        throw Exception("Operação não permitida")
+    }
+
+    override fun getCinemasMaisProximos(context: Context, chars: String, onFinished: (Result<List<Cinema>>) -> Unit) {
         throw Exception("Operação não permitida")
     }
 

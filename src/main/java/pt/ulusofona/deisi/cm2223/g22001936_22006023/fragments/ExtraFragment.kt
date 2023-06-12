@@ -35,6 +35,9 @@ class ExtraFragment : Fragment() {
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Pesquisa Por Atores"
 
         var adapterAtores : ArrayAdapter<String> = ArrayAdapter<String>(requireContext(), R.layout.select_dialog_item, mutableListOf())
+        val actvAtores = binding.autoCompleteTextViewAtores
+
+        actvAtores.threshold = 1
 
         CineRepository.getInstance().getAllAtores { result ->
             if (result.isSuccess) {
@@ -42,9 +45,6 @@ class ExtraFragment : Fragment() {
 
                 CoroutineScope(Dispatchers.Main).launch {
                     adapterAtores = ArrayAdapter<String>(requireContext(), R.layout.select_dialog_item, atores)
-                    val actvAtores = binding.autoCompleteTextViewAtores
-
-                    actvAtores.threshold = 1 //will start working from first character
 
                     actvAtores.setAdapter(adapterAtores)
                 }

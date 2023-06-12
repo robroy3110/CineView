@@ -70,14 +70,24 @@ class RegistarFilmeFragment : Fragment() {
         initDatePicker()
         binding.dataLayout.setEndIconOnClickListener { openDatePicker(binding.root) }
 
-        val adapterCinemas: ArrayAdapter<Cinema> =
-            ArrayAdapter<Cinema>(requireContext(), R.layout.select_dialog_item, Cinemas.cinemas)
+        var adapterCinemas: ArrayAdapter<Cinema> =
+            ArrayAdapter<Cinema>(requireContext(), R.layout.select_dialog_item, mutableListOf())
 
         val actvCinema = binding.autoCompleteTextViewCinemas
 
-        actvCinema.threshold = 1 //will start working from first character
+        actvCinema.threshold = 1
 
-        actvCinema.setAdapter(adapterCinemas)
+        CineRepository.getInstance().getAllCinemas { result ->
+            if (result.isSuccess) {
+                val cinemas = result.getOrDefault(mutableListOf())
+                CoroutineScope(Dispatchers.Main).launch {
+                    adapterCinemas = ArrayAdapter<Cinema>(requireContext(), R.layout.select_dialog_item, cinemas)
+
+                    actvCinema.setAdapter(adapterCinemas)
+                }
+            }
+        }
+
          //setting the adapter data into the AutoCompleteTextView
         cineView = CineViewOkhttp(
             client = OkHttpClient()
@@ -113,11 +123,37 @@ class RegistarFilmeFragment : Fragment() {
 
         binding.autoCompleteTextViewCinemas.doOnTextChanged { text, start, before, count ->
 
-            if(Cinemas.procurarCinema(text.toString())){
-                binding.cinemaLayout.error = null
-            }else{
-                binding.cinemaLayout.error = "Cinema inexistente por favor escolha um da lista"
+            val chars = text.toString()
+            context?.let {
+                CineRepository.getInstance().getCinemasMaisProximos(it, chars){ result ->
+                    if (result.isSuccess) {
+                        val cinemas = result.getOrDefault(mutableListOf())
+                        CoroutineScope(Dispatchers.Main).launch {
+                            adapterCinemas = ArrayAdapter<Cinema>(requireContext(), R.layout.select_dialog_item, cinemas)
+
+                            actvCinema.setAdapter(adapterCinemas)
+                        }
+                    }
+                }
             }
+
+            CineRepository.getInstance().existsCinema(chars) { result ->
+                if (result.isSuccess) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        if (result.getOrDefault(false)) {
+                            binding.cinemaLayout.error = "Cinema inexistente por favor escolha um da lista"
+                        } else {
+                            binding.cinemaLayout.error = null
+                        }
+                    }
+                }
+            }
+
+            //if(Cinemas.procurarCinema(text.toString())){
+            //    binding.cinemaLayout.error = null
+            //}else{
+            //    binding.cinemaLayout.error = "Cinema inexistente por favor escolha um da lista"
+            //}
 
         }
 

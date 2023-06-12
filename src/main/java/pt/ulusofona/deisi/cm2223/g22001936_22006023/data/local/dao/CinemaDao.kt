@@ -1,5 +1,6 @@
 package pt.ulusofona.deisi.cm2223.g22001936_22006023.data.local.dao
 
+import android.content.Context
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -23,6 +24,15 @@ interface CinemaDao {
 
     //@Query("SELECT * FROM Cinema ORDER BY data ASC")
     //fun getAll(): List<CinemaDB>
+
+    @Query("SELECT * FROM Cinema")
+    fun getAllCinemas(): List<CinemaDB>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM Cinema WHERE name LIKE '%' || :cinemaName || '%' LIMIT 1)")
+    fun existsCinema(cinemaName: String): Boolean
+
+    @Query("SELECT * FROM Cinema WHERE name LIKE '%' || :searchString || '%'")
+    fun getCinemasContainingString(searchString: String): List<CinemaDB>
 
     @Query("DELETE FROM Cinema")
     fun deleteAll()

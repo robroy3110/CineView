@@ -1,11 +1,18 @@
 package pt.ulusofona.deisi.cm2223.g22001936_22006023.data.local
+import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import kotlin.math.*
 import androidx.room.PrimaryKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
+import androidx.core.content.ContextCompat
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.data.local.dao.CinemaDao
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.data.local.dao.FilmeDao
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.data.local.dao.HorarioDao
@@ -62,6 +69,175 @@ class CineViewDBWithRoom(private val registoFilmeDao: RegistoFilmeDao, private v
         CoroutineScope(Dispatchers.IO).launch {
             registoFilmeDao.updateFilme(registoFilmeId, novoFilmeId)
         }
+    }
+
+    override fun existsCinema(nome: String, onFinished: (Result<Boolean>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val bool = cinemaDao.existsCinema(nome)
+            onFinished(Result.success(bool))
+        }
+    }
+
+    override fun getCinema(nome: String, onFinished: (Result<Cinema>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val cinemaDB = cinemaDao.getFromName(nome)
+            val ratingDB = ratingDao.getAllById(cinemaDB.id)
+
+            val rating = ratingDB.map { ratingDB ->
+                Rating(
+                    category = ratingDB.category,
+                    score = ratingDB.score
+                )
+            }
+            val horarioDB = horarioDao.getAllById(cinemaDB.id)
+
+            val horario = horarioDB.map{ horarioDB ->
+                Horario(
+                    dia = horarioDB.day,
+                    openHour = horarioDB.openHour,
+                    closeHour = horarioDB.closeHour
+                )
+            }
+            val cinema = Cinema(
+                cinemaDB.id,
+                cinemaDB.name,
+                cinemaDB.provider,
+                cinemaDB.logoUrl,
+                cinemaDB.latitude,
+                cinemaDB.longitude,
+                cinemaDB.address,
+                cinemaDB.postcode,
+                cinemaDB.county,
+                cinemaDB.photos,
+                rating,
+                horario
+            )
+            onFinished(Result.success(cinema))
+        }
+    }
+
+    override fun getAllCinemas(onFinished: (Result<List<Cinema>>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val cinemasDB = cinemaDao.getAllCinemas()
+            val cinemas = cinemasDB.map { cinema ->
+                val ratingDB = ratingDao.getAllById(cinema.id)
+
+                val rating = ratingDB.map { ratingDB ->
+                    Rating(
+                        category = ratingDB.category,
+                        score = ratingDB.score
+                    )
+                }
+                val horarioDB = horarioDao.getAllById(cinema.id)
+
+                val horario = horarioDB.map{ horarioDB ->
+                    Horario(
+                        dia = horarioDB.day,
+                        openHour = horarioDB.openHour,
+                        closeHour = horarioDB.closeHour
+                    )
+                }
+                Cinema(
+                    cinema.id,
+                    cinema.name,
+                    cinema.provider,
+                    cinema.logoUrl,
+                    cinema.latitude,
+                    cinema.longitude,
+                    cinema.address,
+                    cinema.postcode,
+                    cinema.county,
+                    cinema.photos,
+                    rating,
+                    horario
+                )
+            }
+            onFinished(Result.success(cinemas))
+        }
+    }
+
+    override fun getCinemasMaisProximos(context: Context, chars: String, onFinished: (Result<List<Cinema>>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val cinemasDB = cinemaDao.getCinemasContainingString(chars)
+
+            val minhaLocalizacao = getLocalizacao(context)
+            val minhaLatitude = minhaLocalizacao?.latitude ?: 0.0
+            val minhaLongitude = minhaLocalizacao?.longitude ?: 0.0
+
+            val cinemasOrdenados = cinemasDB.sortedBy { calcularDistancia(it.latitude, it.longitude, minhaLatitude, minhaLongitude) }
+            val cinemas = cinemasOrdenados.map { cinema ->
+                val ratingDB = ratingDao.getAllById(cinema.id)
+
+                val rating = ratingDB.map { ratingDB ->
+                    Rating(
+                        category = ratingDB.category,
+                        score = ratingDB.score
+                    )
+                }
+                val horarioDB = horarioDao.getAllById(cinema.id)
+
+                val horario = horarioDB.map{ horarioDB ->
+                    Horario(
+                        dia = horarioDB.day,
+                        openHour = horarioDB.openHour,
+                        closeHour = horarioDB.closeHour
+                    )
+                }
+                Cinema(
+                    cinema.id,
+                    cinema.name,
+                    cinema.provider,
+                    cinema.logoUrl,
+                    cinema.latitude,
+                    cinema.longitude,
+                    cinema.address,
+                    cinema.postcode,
+                    cinema.county,
+                    cinema.photos,
+                    rating,
+                    horario
+                )
+            }
+            onFinished(Result.success(cinemas))
+        }
+    }
+
+    fun getLocalizacao(context: Context): Location? {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val providers: List<String> = locationManager.getProviders(true)
+        var bestLocation: Location? = null
+
+        // Verifique se as permissões estão concedidas
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            for (provider in providers) {
+                val location = locationManager.getLastKnownLocation(provider) ?: continue
+
+                if (bestLocation == null || location.accuracy < bestLocation.accuracy) {
+                    bestLocation = location
+                }
+            }
+        }
+
+        return bestLocation
+    }
+
+    fun calcularDistancia(latitude: Float, longitude: Float, minhaLatitude: Double, minhaLongitude: Double): Double {
+        val raioTerra = 6371 // Raio médio da Terra em quilômetros
+
+        val lat1Rad = Math.toRadians(latitude.toDouble())
+        val lon1Rad = Math.toRadians(longitude.toDouble())
+        val lat2Rad = Math.toRadians(minhaLatitude)
+        val lon2Rad = Math.toRadians(minhaLongitude)
+
+        val difLat = lat2Rad - lat1Rad
+        val difLon = lon2Rad - lon1Rad
+
+        val a = sin(difLat / 2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(difLon / 2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        val distancia = raioTerra * c // Distância em quilômetros
+
+        return distancia
     }
 
     override fun insertAllCinemas(cinemas: List<Cinema>) {

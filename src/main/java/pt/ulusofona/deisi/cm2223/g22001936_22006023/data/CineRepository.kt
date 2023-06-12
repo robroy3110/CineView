@@ -93,6 +93,22 @@ class CineRepository private constructor(
         local.atualizarFilmeDoRegisto(registoFilmeId, novoFilmeId)
     }
 
+    override fun existsCinema(nome: String, onFinished: (Result<Boolean>) -> Unit) {
+        local.existsCinema(nome, onFinished)
+    }
+
+    override fun getCinema(nome: String, onFinished: (Result<Cinema>) -> Unit) {
+        local.getCinema(nome, onFinished)
+    }
+
+    override fun getAllCinemas(onFinished: (Result<List<Cinema>>) -> Unit) {
+        local.getAllCinemas(onFinished)
+    }
+
+    override fun getCinemasMaisProximos(context: Context, chars: String, onFinished: (Result<List<Cinema>>) -> Unit) {
+        local.getCinemasMaisProximos(context, chars, onFinished)
+    }
+
     override fun searchMovie(title: String, onFinished: (Result<Filme>) -> Unit) {
         throw Exception("Operação não permitida")
     }
