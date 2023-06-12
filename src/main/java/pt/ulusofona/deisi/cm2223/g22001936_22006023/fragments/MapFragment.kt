@@ -48,6 +48,13 @@ class MapFragment : Fragment(), OnLocationChangedListener {
             this.map = map
             map.isMyLocationEnabled = true
             CineViewLocation.registerListener(this)
+
+
+            val targetLocation = LatLng(38.7223, -9.1793)
+            val zoomLevel = 11f
+
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(targetLocation, zoomLevel))
+
             CineRepository.getInstance().getFilmesRegistados { result ->
 
                 if (result.isSuccess) {
