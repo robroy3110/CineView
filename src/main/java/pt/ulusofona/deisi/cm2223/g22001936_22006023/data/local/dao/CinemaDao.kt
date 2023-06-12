@@ -34,6 +34,9 @@ interface CinemaDao {
     @Query("SELECT * FROM Cinema WHERE name LIKE '%' || :searchString || '%'")
     fun getCinemasContainingString(searchString: String): List<CinemaDB>
 
+    @Query("SELECT id FROM Cinema WHERE name LIKE '%' || :searchString || '%' LIMIT 1")
+    fun getCinemaIdContainingString(searchString: String): Int
+
     @Query("DELETE FROM Cinema")
     fun deleteAll()
 

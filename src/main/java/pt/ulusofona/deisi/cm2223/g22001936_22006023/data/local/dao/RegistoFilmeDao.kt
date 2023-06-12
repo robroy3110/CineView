@@ -32,5 +32,6 @@ interface RegistoFilmeDao {
     @Query("UPDATE registoFilme SET filmeId = :novoFilmeId WHERE registoFilmeId = :id")
     fun updateFilme(id: String, novoFilmeId: String)
 
-
+    @Query("SELECT registoFilmeId FROM registoFilme WHERE filmeId = :id")
+    fun getRegistoFilmeIdByFilmeId(id: String): String
 }

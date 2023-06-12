@@ -39,7 +39,11 @@ interface FilmeDao {
     @Query("SELECT EXISTS(SELECT 1 FROM Filme WHERE atores LIKE '%' || :ator || '%')")
     fun hasFilmesComAtor(ator: String): Boolean
 
+    @Query("SELECT EXISTS(SELECT 1 FROM Filme WHERE nome LIKE '%' || :nomeFilme || '%')")
+    fun hasFilmeComNome(nomeFilme: String): Boolean
 
+    @Query("SELECT uuid FROM Filme WHERE nome LIKE '%' || :nomeFilme || '%'")
+    fun getFilmeIdPorNome(nomeFilme: String): String
 
 
     //@Query("SELECT * FROM Filme ORDER BY data DESC LIMIT 1")

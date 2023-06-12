@@ -116,6 +116,14 @@ class CineViewDBWithRoom(private val registoFilmeDao: RegistoFilmeDao, private v
         }
     }
 
+
+    override fun getCinemaIdContainingString(searchString: String, onFinished: (Result<Int>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val cinemaId = cinemaDao.getCinemaIdContainingString(searchString)
+            onFinished(Result.success(cinemaId))
+        }
+    }
+
     override fun getAllCinemas(onFinished: (Result<List<Cinema>>) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val cinemasDB = cinemaDao.getAllCinemas()
@@ -153,6 +161,24 @@ class CineViewDBWithRoom(private val registoFilmeDao: RegistoFilmeDao, private v
                 )
             }
             onFinished(Result.success(cinemas))
+        }
+    }
+
+    override fun hasFilme(nomeFilme: String, onFinished: (Result<Boolean>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            onFinished(Result.success(filmeDao.hasFilmeComNome(nomeFilme)))
+        }
+    }
+
+    override fun getFilmeIdByName(nomeFilme: String, onFinished: (Result<String>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch{
+            onFinished(Result.success(filmeDao.getFilmeIdPorNome(nomeFilme)))
+        }
+    }
+
+    override fun getRegistoIdByFilmeId(filmeId: String, onFinished: (Result<String>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch{
+            onFinished(Result.success(registoFilmeDao.getRegistoFilmeIdByFilmeId(filmeId)))
         }
     }
 

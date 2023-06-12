@@ -1,16 +1,28 @@
 package pt.ulusofona.deisi.cm2223.g22001936_22006023
 
-import android.content.Context
+import android.Manifest
 import android.content.DialogInterface
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.speech.RecognizerIntent
+import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.data.CineRepository
@@ -18,6 +30,7 @@ import pt.ulusofona.deisi.cm2223.g22001936_22006023.databinding.ActivityMainBind
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Cinema
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Horario
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.Rating
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +38,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var handler: Handler? = null
     private var countdown = 10
+    private var speechRecognitionLauncher: ActivityResultLauncher<Intent>? = null
+    private val REQUEST_RECORD_AUDIO_PERMISSION = 1
+    private val REQUEST_LOCATION_PERMISSION = 2
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -75,26 +92,119 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             if (cinema.has("opening_hours")) {
-                    val openingHours = cinema.getJSONObject("opening_hours")
-                    val daysOfWeek = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+                val openingHours = cinema.getJSONObject("opening_hours")
+                val daysOfWeek = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
-                    for (index in 0 until daysOfWeek.size) {
-                        val day = daysOfWeek[index]
+                for (index in 0 until daysOfWeek.size) {
+                    val day = daysOfWeek[index]
 
-                        if (openingHours.has(day)) {
-                            val dayObject = openingHours.getJSONObject(day)
-                            val openTime = dayObject.getString("open")
-                            val closeTime = dayObject.getString("close")
-                            horarioList.add(Horario(day, openTime, closeTime))
-                        }
+                    if (openingHours.has(day)) {
+                        val dayObject = openingHours.getJSONObject(day)
+                        val openTime = dayObject.getString("open")
+                        val closeTime = dayObject.getString("close")
+                        horarioList.add(Horario(day, openTime, closeTime))
                     }
                 }
+            }
             cinemasList.add(Cinema(cinemaid,cinemaname,cinemaprovider, logoUrl,latitude,longitude,address,postcode,county,photoList,ratingList,horarioList))
         }
 
-    CineRepository.getInstance().insertAllCinemas(cinemasList)
+        CineRepository.getInstance().insertAllCinemas(cinemasList)
 
+
+        speechRecognitionLauncher = registerForActivityResult( ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                // Obter os resultados do reconhecimento de voz
+                var results = result.getData()!!.getStringArrayListExtra(
+                    RecognizerIntent.EXTRA_RESULTS
+                );
+
+                if (results != null && !results.isEmpty()) {
+                    // Obter o texto reconhecido
+                    var spokenText = results.get(0);
+
+                    Log.i("APP SPOKE WOKE", "$spokenText")
+
+                    var builder = AlertDialog.Builder(this);
+                    builder.setTitle("Este é o filme que procuras?");
+
+                    // Definir o conteúdo do AlertDialog como um contador regressivo
+                    builder.setMessage(spokenText);
+
+                    builder.setCancelable(false); // Impedir que o usuário feche o diálogo
+
+                    builder.setNegativeButton("Sim", DialogInterface.OnClickListener {dialog, id ->
+                        CineRepository.getInstance().hasFilme(spokenText){result->
+                            if(result.isSuccess){
+                                if(result.getOrDefault(false)){
+                                    CineRepository.getInstance().getFilmeIdByName(spokenText){resultFilmeId->
+                                        if(resultFilmeId.isSuccess){
+                                            CineRepository.getInstance().getRegistoIdByFilmeId(resultFilmeId.getOrDefault("")){resultRegistoId->
+                                                if(resultRegistoId.isSuccess){
+                                                    NavigationManager.goToDetalhesFragment(supportFragmentManager,resultRegistoId.getOrDefault(""))
+                                                }else{
+                                                    Toast.makeText(this, result.exceptionOrNull()?.message, Toast.LENGTH_LONG).show()
+                                                }
+                                            }
+                                        }else{
+                                            Toast.makeText(this, result.exceptionOrNull()?.message, Toast.LENGTH_LONG).show()
+                                        }
+                                    }
+                                }else{
+                                    var builder2 = AlertDialog.Builder(this);
+                                    builder2.setTitle("Não existem registo com esse filme!");
+
+                                    // Definir o conteúdo do AlertDialog como um contador regressivo
+                                    builder2.setMessage("Pretende criar um ou tentar novamente?");
+
+                                    builder2.setCancelable(false); // Impedir que o usuário feche o diálogo
+
+                                    builder2.setNegativeButton("Criar", DialogInterface.OnClickListener {dialog, id ->
+                                        NavigationManager.goToRegistarFilmeFragment(supportFragmentManager)
+                                    })
+
+                                    builder2.setNeutralButton("Cancel"){dialog, id->
+                                        dialog.dismiss()
+                                    }
+
+                                    builder2.setPositiveButton("Try Again", DialogInterface.OnClickListener {dialog, id ->
+                                        startSpeechRecognition()
+                                    })
+
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        var alertDialog = builder2.create();
+
+                                        alertDialog.show()
+                                    }
+
+                                }
+                            }else{
+                                Toast.makeText(this, result.exceptionOrNull()?.message, Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    })
+
+                    builder.setPositiveButton("Try Again", DialogInterface.OnClickListener {dialog, id ->
+                        startSpeechRecognition()
+                    })
+                    builder.setNeutralButton("Cancel"){dialog, id->
+                        dialog.dismiss()
+                    }
+
+                    var alertDialog = builder.create();
+
+
+                    alertDialog.show()
+
+                    // Pesquisar o filme pelo nome
+
+                }
+            }
+        };
+
+        // Exibir o AlertDialog quando necessário
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -107,7 +217,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     fun exibirAlertDialog() {
+        countdown=10
         var builder = AlertDialog.Builder(this);
         builder.setTitle("Pesquisar por filmes com microfone");
 
@@ -116,71 +229,90 @@ class MainActivity : AppCompatActivity() {
 
         builder.setCancelable(false); // Impedir que o usuário feche o diálogo
 
-        builder.setPositiveButton("Fechar", DialogInterface.OnClickListener {dialog, id ->
+        builder.setNegativeButton("Fechar", DialogInterface.OnClickListener {dialog, id ->
             dialog.dismiss()
+        })
+
+        builder.setPositiveButton("Microfone", DialogInterface.OnClickListener {dialog, id ->
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                // Se a permissão não estiver concedida, solicite-a ao usuário
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_RECORD_AUDIO_PERMISSION)
+            } else {
+                // Se a permissão já estiver concedida, inicie o reconhecimento de voz
+                startSpeechRecognition()
+            }
         })
 
         var alertDialog = builder.create();
 
         alertDialog.setOnShowListener { dialog ->
 
-                startCountdown(alertDialog);
+            startCountdown(alertDialog)
+
 
         }
 
         alertDialog.show()
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permissão concedida, inicie o reconhecimento de voz
+                startSpeechRecognition()
+            } else {
+                // Permissão negada, informe ao usuário ou tome uma ação apropriada
+            }
+        }
+
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permissão concedida, execute a lógica para acessar a localização do usuário
+                NavigationManager.goToMapFragment(supportFragmentManager)
+            } else {
+                // Permissão negada, informe ao usuário ou tome uma ação apropriada
+            }
+        }
+
+    }
+
     fun startCountdown(alertDialog :AlertDialog) {
         handler?.postDelayed(Runnable() {
-                countdown--
+            countdown--
 
-                // Atualizar a mensagem do AlertDialog com o novo valor do contador
-                alertDialog.setMessage(Integer.toString(countdown))
+            // Atualizar a mensagem do AlertDialog com o novo valor do contador
+            alertDialog.setMessage(Integer.toString(countdown))
 
-                if (countdown > 0) {
-                    // Continuar o contador regressivo
-                    startCountdown(alertDialog)
-                } else {
-                    // Contagem regressiva concluída, fechar o AlertDialog
-                    alertDialog.dismiss()
-                }
+            if (countdown > 0) {
+                // Continuar o contador regressivo
+                startCountdown(alertDialog)
+            } else {
+                // Contagem regressiva concluída, fechar o AlertDialog
+                alertDialog.dismiss()
+            }
         },1000)
     }
 
-    fun onClick(context : Context) {
-        var done = false
-        var builder: AlertDialog.Builder? = context.let {
-            val builder = AlertDialog.Builder(context)
-            builder.apply {
-                setPositiveButton("Done",
-                    DialogInterface.OnClickListener { dialog, id ->
-                        done = true
-                    })
-                setNegativeButton("Cancel",
-                    DialogInterface.OnClickListener { dialog, id ->
-                        done = true
-                    })
-            }
-        }
-        builder?.setMessage("10")?.setTitle("Pesquisar por filme com microfone!")
-        var dialog: AlertDialog?  = builder?.create()
-        object : CountDownTimer(10500, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                if(!done) {
-                    builder?.setMessage((millisUntilFinished / 1000).toString())
-                        ?.setTitle("Pesquisar por filme com microfone!")
-                    dialog?.dismiss()
-                    dialog = builder?.create()
-                    dialog?.show()
-                }
-            }
+    private fun startSpeechRecognition() {
+        // Criar uma Intent para iniciar o reconhecimento de voz
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        )
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Fale o nome do filme...")
 
-            override fun onFinish() {
-                dialog?.dismiss()
-            }
-        }.start()
+        // Iniciar a atividade de reconhecimento de voz
+        speechRecognitionLauncher!!.launch(intent)
     }
+
+
+
+
 
     private fun setupDrawerMenu() {
 

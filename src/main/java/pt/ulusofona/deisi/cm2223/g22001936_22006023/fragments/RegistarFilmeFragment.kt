@@ -39,6 +39,7 @@ import pt.ulusofona.deisi.cm2223.g22001936_22006023.models.RegistoFilme
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.pipocas.Cinemas
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.pipocas.Filmes
 import pt.ulusofona.deisi.cm2223.g22001936_22006023.databinding.FragmentRegistarFilmeBinding
+import pt.ulusofona.deisi.cm2223.g22001936_22006023.location.OnLocationChangedListener
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -58,6 +59,7 @@ class RegistarFilmeFragment : Fragment() {
     var adapter = PhotoAdapter(photoList)
     private lateinit var cineView : CineViewOkhttp
     var dropDownFilme : MutableList<Filme> = mutableListOf()
+    private var cinemaTitle = ""
 
 
     override fun onCreateView(
@@ -123,9 +125,9 @@ class RegistarFilmeFragment : Fragment() {
 
         binding.autoCompleteTextViewCinemas.doOnTextChanged { text, start, before, count ->
 
-            val chars = text.toString()
+            cinemaTitle = text.toString()
             context?.let {
-                CineRepository.getInstance().getCinemasMaisProximos(it, chars){ result ->
+                CineRepository.getInstance().getCinemasMaisProximos(it, cinemaTitle){ result ->
                     if (result.isSuccess) {
                         val cinemas = result.getOrDefault(mutableListOf())
                         CoroutineScope(Dispatchers.Main).launch {
@@ -137,7 +139,7 @@ class RegistarFilmeFragment : Fragment() {
                 }
             }
 
-            CineRepository.getInstance().existsCinema(chars) { result ->
+            CineRepository.getInstance().existsCinema(cinemaTitle) { result ->
                 if (result.isSuccess) {
                     CoroutineScope(Dispatchers.Main).launch {
                         if (result.getOrDefault(false)) {
@@ -225,18 +227,25 @@ class RegistarFilmeFragment : Fragment() {
                     if (result.isSuccess) {
                         CoroutineScope(Dispatchers.Main).launch {
                             Log.i("Aoo", "${dropDownFilme}")
-                                val filme = result.getOrDefault(Filme("", Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), "", "", "", "", 0.0, 0, "", ""))
-                                CineRepository.getInstance().insertFilmeRegistado(
-                                    RegistoFilme(
-                                        filme,
-                                        Cinemas.pegarCinema(binding.autoCompleteTextViewCinemas.text.toString())!!,
-                                        binding.ratingBar.rating.toInt(),
-                                        binding.dataEdit.text.toString(),
-                                        photoList.toList(),
-                                        binding.observacoesEdit.text.toString()
-                                    )
+                            val filme = result.getOrDefault(Filme("", Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), "", "", "", "", 0.0, 0, "", ""))
+                            var cinemaName = cinemaTitle.split(" - ")[0]
+                            CineRepository.getInstance().getCinema(cinemaName) { result2 ->
+                                if (result2.isSuccess) {
+                                    var cinema = result2.getOrDefault(Cinema(0,"","","",0f,0f,"","","", mutableListOf(), mutableListOf(), mutableListOf()))
+                                    CineRepository.getInstance().insertFilmeRegistado(
+                                        RegistoFilme(
+                                            filme,
+                                            cinema,
+                                            binding.ratingBar.rating.toInt(),
+                                            binding.dataEdit.text.toString(),
+                                            photoList.toList(),
+                                            binding.observacoesEdit.text.toString()
+                                        )
 
-                                ) {}
+                                    ) {}
+                                }
+                            }
+
                             Filmes.add(filme)
                             Toast.makeText(context, "Registo submetido com sucesso!", Toast.LENGTH_LONG).show()
                         }
@@ -294,5 +303,6 @@ class RegistarFilmeFragment : Fragment() {
     private fun openDatePicker(view: View) {
         datePickerDialog.show()
     }
+
 
 }

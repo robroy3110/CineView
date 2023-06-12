@@ -86,6 +86,10 @@ class CineViewOkhttp(
         throw Exception("Operação não permitida")
     }
 
+    override fun getCinemaIdContainingString(searchString: String, onFinished: (Result<Int>) -> Unit) {
+        throw Exception("Operação não permitida")
+    }
+
     override fun getAllCinemas(onFinished: (Result<List<Cinema>>) -> Unit) {
         throw Exception("Operação não permitida")
     }
@@ -94,6 +98,17 @@ class CineViewOkhttp(
         throw Exception("Operação não permitida")
     }
 
+    override fun hasFilme(nomeFilme: String, onFinished: (Result<Boolean>) -> Unit) {
+        throw Exception("Operação não permitida")
+    }
+
+    override fun getFilmeIdByName(nomeFilme: String, onFinished: (Result<String>) -> Unit) {
+        throw Exception("Operação não permitida")
+    }
+
+    override fun getRegistoIdByFilmeId(filmeId: String, onFinished: (Result<String>) -> Unit) {
+        throw Exception("Operação não permitida")
+    }
     override fun getFilmesRegistados(onFinished: (Result<List<RegistoFilme>>) -> Unit) {
         throw Exception("Operação não permitida")
     }

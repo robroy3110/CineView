@@ -108,7 +108,6 @@ class MapFragment : Fragment(), OnLocationChangedListener {
     // Este método será invocado sempre que a posição alterar
     override fun onLocationChanged(latitude: Double, longitude: Double) {
         placeCamera(latitude, longitude)
-        placeCityName(latitude, longitude)
     }
 
     // Atualiza e faz zoom no mapa de acordo com a localização
@@ -122,15 +121,6 @@ class MapFragment : Fragment(), OnLocationChangedListener {
             CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
-    // Obtém a localidade do utilizador através da sua posição e coloca-a
-    // numa TextView
-    private fun placeCityName(latitude: Double, longitude: Double) {
-        val addresses = geocoder.getFromLocation(latitude, longitude, 5)
-        val location = addresses.first {
-            it.locality != null && it.locality.isNotEmpty()
-        }
-        binding.tvCityName.text = location.locality
-    }
 
     override fun onDestroy() {
         super.onDestroy()

@@ -101,12 +101,28 @@ class CineRepository private constructor(
         local.getCinema(nome, onFinished)
     }
 
+    override fun getCinemaIdContainingString(searchString: String, onFinished: (Result<Int>) -> Unit) {
+        local.getCinemaIdContainingString(searchString, onFinished)
+    }
+
     override fun getAllCinemas(onFinished: (Result<List<Cinema>>) -> Unit) {
         local.getAllCinemas(onFinished)
     }
 
     override fun getCinemasMaisProximos(context: Context, chars: String, onFinished: (Result<List<Cinema>>) -> Unit) {
         local.getCinemasMaisProximos(context, chars, onFinished)
+    }
+
+    override fun hasFilme(nomeFilme: String, onFinished: (Result<Boolean>) -> Unit) {
+        local.hasFilme(nomeFilme,onFinished)
+    }
+
+    override fun getFilmeIdByName(nomeFilme: String, onFinished: (Result<String>) -> Unit) {
+        local.getFilmeIdByName(nomeFilme,onFinished)
+    }
+
+    override fun getRegistoIdByFilmeId(filmeId: String, onFinished: (Result<String>) -> Unit) {
+        local.getRegistoIdByFilmeId(filmeId,onFinished)
     }
 
     override fun searchMovie(title: String, onFinished: (Result<Filme>) -> Unit) {

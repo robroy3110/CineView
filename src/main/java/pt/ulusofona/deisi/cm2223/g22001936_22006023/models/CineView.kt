@@ -18,8 +18,10 @@ abstract class CineView {
     abstract fun atualizarFilmeDoRegisto(registoFilmeId: String, novoFilmeId: String)
     abstract fun existsCinema(nome: String, onFinished: (Result<Boolean>) -> Unit)
     abstract fun getCinema(nome: String, onFinished: (Result<Cinema>) -> Unit)
+    abstract fun getCinemaIdContainingString(searchString: String, onFinished: (Result<Int>) -> Unit)
     abstract fun getAllCinemas(onFinished: (Result<List<Cinema>>) -> Unit)
     abstract fun getCinemasMaisProximos(context: Context, chars: String, onFinished: (Result<List<Cinema>>) -> Unit)
-
-
+    abstract fun hasFilme(nomeFilme: String,onFinished: (Result<Boolean>) -> Unit)
+    abstract fun getFilmeIdByName(nomeFilme: String,onFinished: (Result<String>) -> Unit)
+    abstract fun getRegistoIdByFilmeId(filmeId: String,onFinished: (Result<String>) -> Unit)
 }
