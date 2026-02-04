@@ -1,4 +1,4 @@
-#Aplicação Móvel CineView
+# Aplicação Móvel CineView
 
 Autores: Inês Marques; Robert Cachapa
 
