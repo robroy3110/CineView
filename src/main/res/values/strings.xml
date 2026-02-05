@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">CineView</string>
+    <string name="registo_filme">Registar Filme</string>
+    <string name="filmes_vistos">Filmes Vistos</string>
+    <string name="detalhe_filme">Detalhes</string>
+    <string name="pesquisar_filme">Pesquisar Filme</string>
+    <string name="home">Home</string>
+    <string name="extra">Extra</string>
+    <string name="drawer_open">Aberto</string>
+    <string name="drawer_close">Fechado</string>
+    <string name="nome_filme_hint">ex: Mama</string>
+    <string name="nome_cinema_hint">ex: Cinemas NOS</string>
+    <string name="observaçoes_hint">ex: Filme muito bom!</string>
+    <string name="cinema_label">Cinema</string>
+    <string name="filme_label">Filme</string>
+    <string name="ator_label">Ator</string>
+    <string name="atores_label">Atores:</string>
+    <string name="observaçoes_label">Observações</string>
+    <string name="data">Data</string>
+    <string name="rating">Rating (1–10)</string>
+    <string name="submit">Registar</string>
+    <string name="image">Imagens *opcional</string>
+    <string name="map">map</string>
+    <string name="lista">Lista</string>
+    <string name="sinopse">Sinopse</string>
+    <string name="imdb">IMDB</string>
+    <string name="observacoes">Observações</string>
+    <string name="opiniao">A tua opinião</string>
+    <string name="ultimos_registos">Últimos registos</string>
+    <string name="filmes_mais_vistos">Filmes mais vistos</string>
+    <string name="procurar">Procurar</string>
+    <string name="pesquisa_por_atores">Pesquisa Por Atores</string>
+    <string name="fotos">Fotos</string>
+    <string name="saber_mais">Saber mais...</string>
+
+</resources>
