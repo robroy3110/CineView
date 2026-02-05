@@ -1,6 +1,6 @@
 Aplicação Móvel CineView
 
-Made by: Robert Cachapa and Inês Marques ([![name](https://www.hiclipart.com/free-transparent-background-png-clipart-tqdqg)](https://github.com/sranene))
+Made by: Robert Cachapa and Inês Marques ([![github](https://www.flaticon.com/free-icon/github-logo_25231)](https://github.com/sranene))
 
 SCREENSHOTS
 
