@@ -1,6 +1,6 @@
 Aplicação Móvel CineView
 
-Made by: Robert Cachapa and Inês Marques ([![github](https://github.com/favicon.ico)](https://github.com/sranene))
+Made by: Robert Cachapa and Inês Marques ([![GitHub Repo](https://img.shields.io/badge/GitHub-OWNER%2FREPO-black?logo=github)](https://github.com/sranene))
 
 SCREENSHOTS
 
