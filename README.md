@@ -37,14 +37,6 @@ Search for Actors
 
 ![pesquisa](https://user-images.githubusercontent.com/79331525/234126658-c3fee93f-02f6-40ac-982d-cded005581f9.png)
 
-Movies: [Spider-Man, 2012, Cars, The Maze Runner,  Elysium, Interstellar]
-
-Actors: [Tobey Maguire, Kirsten Dunst, Willem Dafoe, John Cusack, Thandiwe Newton, Chiwetel Ejiofor, Owen Wilson, Bonnie Hunt, Paul Newman, Dylan O'Brien, Kaya Scodelario, Will Poulter, Matt Damon, Jodie Foster, Sharlto Copley, Matthew McConaughey, Anne Hathaway]
-
-FUNCIONALIDADES
-
-![funcionalidades](https://user-images.githubusercontent.com/79331525/234123305-84da9a88-5678-4be7-add4-8cca695b3d2f.png)
-
 Custom Rating Bar: https://www.youtube.com/watch?v=HRIDAFJ4jMs || https://www.youtube.com/watch?v=Dvz2MLJX-Ss&t=195s
 
 
