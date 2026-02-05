@@ -1,4 +1,4 @@
-Mobile App CineView
+Mobile App CineView (2021)
 
 Made by: Robert Cachapa and Inês Marques [![GitHub Repo](https://img.shields.io/badge/-black?logo=github)](https://github.com/sranene)
 
