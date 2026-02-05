@@ -36,7 +36,3 @@ Movie Details
 Search for Actors
 
 ![pesquisa](https://user-images.githubusercontent.com/79331525/234126658-c3fee93f-02f6-40ac-982d-cded005581f9.png)
-
-Custom Rating Bar: https://www.youtube.com/watch?v=HRIDAFJ4jMs || https://www.youtube.com/watch?v=Dvz2MLJX-Ss&t=195s
-
-
